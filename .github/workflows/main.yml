@@ -98,14 +98,24 @@ jobs:
           pod install
 
       - name: Build iOS App Archive
+              - name: Build iOS App Archive
         run: |
           cd ios
-          xcodebuild -workspace "rn_ci_cd.xcworkspace" \
-                     -scheme "rn_ci_cd" \
+          
+          # Automatically find the actual .xcworkspace file name
+          WORKSPACE_FILE=$(ls -d *.xcworkspace | head -n 1)
+          # Extract the scheme name by removing the extension
+          SCHEME_NAME=$(basename "$WORKSPACE_FILE" .xcworkspace)
+          
+          echo "Found Workspace: $WORKSPACE_FILE"
+          echo "Using Scheme: $SCHEME_NAME"
+          
+          xcodebuild -workspace "$WORKSPACE_FILE" \
+                     -scheme "$SCHEME_NAME" \
                      -configuration Release \
                      -sdk iphoneos \
                      -derivedDataPath build \
-                     clean archive -archivePath build/rn_ci_cd.xcarchive
+                     clean archive -archivePath build/$SCHEME_NAME.xcarchive
 
       - name: Upload iOS Archive Artifact
         uses: actions/upload-artifact@v4
