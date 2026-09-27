@@ -101,19 +101,21 @@ jobs:
         run: |
           cd ios
           
-          # Automatically find the actual .xcworkspace file name
           WORKSPACE_FILE=$(ls -d *.xcworkspace | head -n 1)
-          # Extract the scheme name by removing the extension
           SCHEME_NAME=$(basename "$WORKSPACE_FILE" .xcworkspace)
           
           echo "Found Workspace: $WORKSPACE_FILE"
           echo "Using Scheme: $SCHEME_NAME"
           
+          # Appending settings to bypass signing enforcement and targeting the simulator SDK
           xcodebuild -workspace "$WORKSPACE_FILE" \
                      -scheme "$SCHEME_NAME" \
                      -configuration Release \
-                     -sdk iphoneos \
+                     -sdk iphonesimulator \
                      -derivedDataPath build \
+                     CODE_SIGNING_ALLOWED=NO \
+                     CODE_SIGNING_REQUIRED=NO \
+                     CODE_SIGN_IDENTITY="" \
                      clean archive -archivePath build/$SCHEME_NAME.xcarchive
 
       - name: Upload iOS Archive Artifact
