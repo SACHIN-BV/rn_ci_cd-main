@@ -98,7 +98,6 @@ jobs:
           pod install
 
       - name: Build iOS App Archive
-              - name: Build iOS App Archive
         run: |
           cd ios
           
@@ -121,4 +120,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-release-archive
-          path: ios/build/rn_ci_cd.xcarchive
+          # Use a wildcard (*) so it finds your dynamic archive folder name smoothly
+          path: ios/build/*.xcarchive
